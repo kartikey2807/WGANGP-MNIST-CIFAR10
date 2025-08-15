@@ -1,9 +1,9 @@
-## CIFAR-10 dataset
-* Hard to fine-tune **WGAN-GP**
+## Torchvision CIFAR-10 Dataset
+* Hard to fine-tune ***WGAN-GP***
 * sensitive to hyperparameters
-* presence of **artifacts**
-* hard to generate *'cat'* and *'dog'* samples
-* easy to generate *'horse'* and *'planes'*
+* Blurred images and ***Artifacts***
+* hard to generate *cat* and *dog* samples
+* easy to generate *ship* and *horse*
 ---
 **Observations**   
 *sampled fake images*
