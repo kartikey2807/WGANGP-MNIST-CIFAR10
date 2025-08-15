@@ -1,7 +1,8 @@
 ## WGAN-GP for MNIST dataset. Models
 ## are initialized from the standard
 ## normal distribution having 0 mean
-## 0.02 standard deviation.
+## 0.02 standard deviation Keep Adam
+## optimizer to standard betas.
 
 import torch
 import torch.nn as nn
