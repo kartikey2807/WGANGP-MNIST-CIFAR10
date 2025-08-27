@@ -147,13 +147,13 @@ for epoch in range(EPOCHS):
             fake_logit = Cnet(fakes,label)
             real_logit = Cnet(image,label)
             penalty = gradient_penalty(Cnet,image,fakes,label,DEVICE)
-
+            
             Closs =-(real_logit.mean() - fake_logit.mean()) + LAMBDA_GP*penalty
             Closs.backward(retain_graph=True)
             Coptim.step()
         
         Goptim.zero_grad()
-        
+
         Gloss = -Cnet(fakes,label).mean() - IMP*torch.cdist(fakes,fakes).mean()
         Gloss.backward()
         Goptim.step()
