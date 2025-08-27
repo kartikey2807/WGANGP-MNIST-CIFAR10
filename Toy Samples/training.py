@@ -153,7 +153,7 @@ for epoch in range(EPOCHS):
             Coptim.step()
         
         Goptim.zero_grad()
-
+        
         Gloss = -Cnet(fakes,label).mean() - IMP*torch.cdist(fakes,fakes).mean()
         Gloss.backward()
         Goptim.step()
