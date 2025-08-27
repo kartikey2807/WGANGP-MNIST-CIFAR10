@@ -59,7 +59,8 @@ class Critic(nn.Module):
         self.embed = nn.Embedding(2,2)
     
     def linear(self,i,o):
-        return nn.Sequential(nn.Linear(i,o), nn.LeakyReLU(0.2))
+        return nn.Sequential(nn.Linear(i,o),
+                         nn.LeakyReLU(0.2))
     
     def forward(self,x,y):
 
@@ -75,10 +76,10 @@ class Critic(nn.Module):
 ## is class '1' 
 
 class ToyDataset(Dataset):
-    def __init__(self,n_samples,noise,factor):
+    def __init__(self,sample,noise,factor):
         super().__init__()
 
-        X,y = make_circles(n_samples,noise=noise,factor=factor)
+        X,y = make_circles(n_samples=sample,noise=noise,factor=factor)
         self.X = torch.tensor(X)
         self.y = torch.tensor(y)
     
@@ -88,7 +89,7 @@ class ToyDataset(Dataset):
     def __getitem__(self, index):
         return self.X[index],self.y[index]
 
-def grad_penalty(critic,real,fake,label,device):
+def gradient_penalty(critic,real,fake,label,device="cpu"):
     B,N = real.shape
     alpha = torch.rand(B,1).repeat(1,N)
     alpha = alpha.to(device)
@@ -109,7 +110,7 @@ def grad_penalty(critic,real,fake,label,device):
 
 def weight_initialization(model):
     for m in model.modules():
-        if isinstance(m,(nn.Linear,nn.BatchNorm1d)): ## 0 / 0.02
+        if isinstance(m,(nn.Linear,nn.BatchNorm1d)):
             nn.init.normal_(m.weight.data,0.0,0.02)
 
 ## WGAN-GP models
@@ -122,14 +123,12 @@ Gnet = Gnet.to(DEVICE)
 Coptim = Adam(Cnet.parameters(),LR,betas=(0.5,0.999))
 Goptim = Adam(Gnet.parameters(),LR,betas=(0.5,0.999))
 
-datasets = ToyDataset(n_samples=1000,noise=0.15,factor=0.3)
+datasets = ToyDataset(1000,0.15,0.3)
 dataload = DataLoader(datasets,BATCH_SIZE,shuffle=True)
 
 for epoch in range(EPOCHS):
 
-    progression_bar = tqdm(dataload)
-
-    for image,label in progression_bar: ## show the average loss
+    for image, label  in  tqdm(dataload):
         image = image.float().to(DEVICE)
         label = label.long ().to(DEVICE)
 
@@ -147,7 +146,7 @@ for epoch in range(EPOCHS):
 
             fake_logit = Cnet(fakes,label)
             real_logit = Cnet(image,label)
-            penalty = grad_penalty(Cnet,image,fakes,label,DEVICE)
+            penalty = gradient_penalty(Cnet,image,fakes,label,DEVICE)
 
             Closs =-(real_logit.mean() - fake_logit.mean()) + LAMBDA_GP*penalty
 
@@ -155,11 +154,7 @@ for epoch in range(EPOCHS):
             Coptim.step()
         
         Goptim.zero_grad()
-
-        ## try to maximize b/w the inter
-        ## samples distance and make the
-        ## points spread out. Add to the
-        ## generator loss.
+        
         Gloss = -Cnet(fakes,label).mean() - IMP*torch.cdist(fakes,fakes).mean()
         Gloss.backward()
         Goptim.step()
