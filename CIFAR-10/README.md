@@ -1,6 +1,6 @@
 ## CIFAR-10 Dataset
 
-*sampled fake images*
+sampled fake images
 <p float="left">
 <img src="images/sample_1_fake.png" width="100">
 <img src="images/sample_2_fake.png" width="100">
@@ -14,7 +14,7 @@
 <img src="images/sample_8_fake.png" width="100">
 <img src="images/sample_10_fake.png" width="100"></p>
 
-*sampled real images*
+sampled real images
 <p float="left">
 <img src="images/sample_1_real.png" width="100">
 <img src="images/sample_2_real.png" width="100">
